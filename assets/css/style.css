@@ -1,0 +1,143 @@
+
+:root {
+    font-size: 16px;
+    font-family: Helvetica, sans-serif;
+
+    /* Colors */
+    --bg-color: #142323;
+    --bg-blue: #3066BE;
+    --bg-sandbox: #dbdbdb;
+    --bg-error: #D1462F;
+    --white: #fff;
+    --black: #000;
+}
+
+/* NORMALIZER */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background-color: var(--bg-sandbox);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+a, a:active, a:focus, a:hover {
+    text-decoration: none;
+}
+
+/* TODOLIST */
+
+.main-ttl {
+    text-align: center;
+    font-size: 2rem;
+    line-height: 2rem;
+    font-weight: 900;
+    letter-spacing: 1.5rem;
+    opacity: .5;
+    text-transform: capitalize;
+    margin-bottom: 1rem;
+}
+
+.task-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.task {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-color);
+    padding: 1rem;
+}
+.task__text {
+    color: var(--white);
+    font-weight: normal;
+}
+.task__utils {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .5rem;
+}
+
+.task__lnk {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 3rem;
+    aspect-ratio: 1/1;
+    font-size: 1.5rem;
+    border-radius: .5rem;
+    background-color: var(--bg-color);
+    transition: background-color ease-in-out 200ms;
+}
+.task__lnk:hover {
+    background-color: var(--bg-sandbox);
+}
+
+
+.form-add {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    background-color: var(--bg-blue);
+    position: fixed;
+    bottom: 0;
+}
+.form-add__wrap {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+}
+.form-add__lbl {
+    color: var(--white);
+}
+.form-add__fld {
+    padding: .5rem;
+    border-radius: .5rem;
+    border: 1px solid var(--black);
+}
+.form-add__btn {
+    border: none;
+    background: none;
+    font-size: 2rem;
+    padding: 0;
+}
+
+.notification, .error {
+    border-radius: 1rem;
+    margin: 1rem;
+    padding: .5rem;
+}
+.notification {
+    background-color: var(--white);
+    color: var(--black);
+}
+.error {
+    background-color: var(--bg-error);
+    color: var(--white);
+}
