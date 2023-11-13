@@ -1,5 +1,6 @@
 <?php
 
+require_once 'vendor/autoload.php';
 require_once 'includes/_functions.php';
 include 'includes/_db.php';
 
@@ -20,45 +21,65 @@ generateToken();
 <body>
     <?php
 
-    if (isset($_GET['notif'])) {
-        $msg[] = urldecode($_GET['notif']);
-    }
-    if (isset($msg) && !empty($msg)) {
-        echo '<div class="notification">😀 ' . implode(' | ', $msg) . '</div>';
+    if (isset($_SESSION['notif'])) {
+        echo '<div class="notification">😀 ' . $_SESSION['notif'] . '</div>';
+        unset($_SESSION['notif']);
     }
 
-    if (isset($_GET['error'])) {
-        $error[] = urldecode($_GET['error']);
-    }
-    if (isset($error) && !empty($error)) {
-        echo '<div class="error">😨 ' . implode(' | ', $error) . '</div>';
+    if (isset($_SESSION['error'])) {
+        echo '<div class="error">😨 ' . $_SESSION['error'] . '</div>';
+        unset($_SESSION['error']);
     }
 
     ?>
     <ul class="task-list">
 
         <?php
-        $query = $dbCo->prepare("SELECT `id_task`, `text` FROM `task` WHERE done = 0 ORDER BY date_create DESC;");
+        $query = $dbCo->prepare("SELECT `id_task`, `text` FROM `task` WHERE done = 0 ORDER BY priority ASC;");
 
         $isQueryOk = $query->execute();
 
         foreach ($query->fetchAll() as $task) {
+            $isEdit = isset($_GET['action']) && $_GET['action'] === 'edit' && intval($_GET['id']) === $task['id_task'];
         ?>
             <li class="task">
                 <a class="task__lnk" href="action.php?action=done&id=<?= $task['id_task'] ?>&token=<?= $_SESSION['token'] ?>" title="effectuée">⭕</a>
-                <h3 class="task__text"><?= $task['text'] ?></h3>
+
+                <?php
+                if ($isEdit) {
+                ?>
+                    <form class="inline-form" action="action.php" method="post">
+                        <input type="hidden" name="id" value="<?= $task['id_task'] ?>">
+                        <input class="inline-form__fld" type="text" name="text" id="text" value="<?= $task['text'] ?>">
+                        <input type="hidden" name="action" value="update">
+                        <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+                        <input class="inline-form__btn" type="submit" value="🖊️">
+                    </form>
+                <?php
+                } else {
+                ?>
+                    <h3 class="task__text"><?= $task['text'] ?></h3>
+                <?php
+                }
+                ?>
                 <ul class="task__utils">
+                    <?php
+                    if (!$isEdit) {
+                    ?>
+                        <li>
+                            <a class="task__lnk" href="?action=edit&id=<?= $task['id_task'] ?>" title="modifier">🖊️</a>
+                        </li>
+                    <?php
+                    }
+                    ?>
                     <li>
-                        <a class="task__lnk" href="#" title="modifier">🖊️</a>
+                        <a class="task__lnk" href="action.php?action=delete&id=<?= $task['id_task'] ?>&token=<?= $_SESSION['token'] ?>" title="supprimer">❌</a>
                     </li>
                     <li>
-                        <a class="task__lnk"/ href="action.php?action=delete&id=<?= $task['id_task'] ?>" title="supprimer">❌</a>
+                        <a class="task__lnk" href="action.php?action=up&id=<?= $task['id_task'] ?>&token=<?= $_SESSION['token'] ?>" title="monter">👍🏼</a>
                     </li>
                     <li>
-                        <a class="task__lnk" href="#" title="monter">👍🏼</a>
-                    </li>
-                    <li>
-                        <a class="task__lnk" href="#" title="descendre">👎🏼</a>
+                        <a class="task__lnk" href="action.php?action=down&id=<?= $task['id_task'] ?>&token=<?= $_SESSION['token'] ?>" title="descendre">👎🏼</a>
                     </li>
                 </ul>
             </li>

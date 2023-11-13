@@ -116,12 +116,14 @@ a, a:active, a:focus, a:hover {
 .form-add__lbl {
     color: var(--white);
 }
-.form-add__fld {
+.form-add__fld, 
+.inline-form__fld {
     padding: .5rem;
     border-radius: .5rem;
     border: 1px solid var(--black);
 }
-.form-add__btn {
+.form-add__btn,
+.inline-form__btn {
     border: none;
     background: none;
     font-size: 2rem;
@@ -140,4 +142,10 @@ a, a:active, a:focus, a:hover {
 .error {
     background-color: var(--bg-error);
     color: var(--white);
+}
+
+.inline-form {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
