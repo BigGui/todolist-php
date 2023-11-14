@@ -35,17 +35,23 @@ generateToken();
     <ul class="task-list">
 
         <?php
-        $query = $dbCo->prepare("SELECT `id_task`, `text` FROM `task` WHERE done = 0 ORDER BY priority ASC;");
+        $query = $dbCo->prepare("SELECT `id_task`, `text`, `done` FROM `task` WHERE done = 0 ORDER BY priority ASC, date_create DESC;");
 
         $isQueryOk = $query->execute();
 
         foreach ($query->fetchAll() as $task) {
-            $isEdit = isset($_GET['action']) && $_GET['action'] === 'edit' && intval($_GET['id']) === $task['id_task'];
+            $isEdit = isset($_GET['action']) && $_GET['action'] === 'edit' && intval($_GET['id']) === intval($task['id_task']);
         ?>
             <li class="task">
-                <a class="task__lnk" href="action.php?action=done&id=<?= $task['id_task'] ?>&token=<?= $_SESSION['token'] ?>" title="effectuée">⭕</a>
 
                 <?php
+                if ($task['done'] == 1) { ?>
+                    <a class="task__lnk" href="action.php?action=undone&id=<?= $task['id_task'] ?>&token=<?= $_SESSION['token'] ?>" title="décocher">✔️</a>
+                <?php } else { ?>
+                    <a class="task__lnk" href="action.php?action=done&id=<?= $task['id_task'] ?>&token=<?= $_SESSION['token'] ?>" title="cocher">⭕</a>
+                <?php
+                }
+                
                 if ($isEdit) {
                 ?>
                     <form class="inline-form" action="action.php" method="post">

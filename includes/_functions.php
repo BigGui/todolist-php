@@ -1,5 +1,11 @@
 <?php
 
+
+// ---------------------
+// SECURITY FUNCTIONS
+// ---------------------
+
+
 /**
  * Generate a valid token in $_SESSION
  *
@@ -22,7 +28,7 @@ function generateToken()
  */
 function checkCSRF(string $url): void
 {
-    if (!isset($_SERVER['HTTP_REFERER']) || !str_contains($_SERVER['HTTP_REFERER'], 'http://localhost/todolist/')) {
+    if (!isset($_SERVER['HTTP_REFERER']) || !str_contains($_SERVER['HTTP_REFERER'], 'http://localhost/todolist-php')) {
         $_SESSION['error'] = 'error_referer';
     } else if (
         !isset($_SESSION['token']) || !isset($_REQUEST['token'])
@@ -36,6 +42,24 @@ function checkCSRF(string $url): void
     header('Location: ' . $url);
     exit;
 }
+
+/**
+ * Apply treatment on given array to prevent XSS fault.
+ * 
+ * @param array &$array
+ */
+function checkXSS(array &$array): void
+{
+    $array = array_map('strip_tags', $array);
+    // foreach ($array as $key => $value) {
+    //     $array[$key] = strip_tags($value);
+    // }
+}
+
+
+// ---------------------
+// TASK MANAGEMENT
+// ---------------------
 
 /**
  * Get the priority value for a new task.
@@ -78,4 +102,26 @@ function moveUpPriorityAbove(int $minPriority): bool
 
     $query = $dbCo->prepare("UPDATE task SET priority = priority - 1 WHERE priority > :priority;");
     return $query->execute(['priority' => $minPriority]);
+}
+
+/**
+ * Add an error to display and stop script
+ * 
+ * @param string $error
+ */
+function addErrorAndExit(string $error): void
+{
+    $_SESSION['error'] = $error;
+    header('Location: index.php');
+    exit;
+}
+
+/**
+ * Add a notification to display
+ * 
+ * @param string $text
+ */
+function addNotification(string $text): void
+{
+    $_SESSION['notif'] = $text;
 }
