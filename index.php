@@ -23,7 +23,7 @@ generateToken();
         <h1 class="main-ttl">AU BOULOT !</h1>
     </header>
     <?= getNotifHtml() ?>
-    <ul class="task-list">
+    <ul class="task-list" id="tasksList">
 
         <?php
         $query = $dbCo->prepare("SELECT `id_task`, `text`, `done` FROM `task` WHERE done = 0 ORDER BY priority ASC, date_create DESC;");
@@ -40,9 +40,6 @@ generateToken();
                     <a class="task__lnk" href="action.php?action=undone&id=<?= $task['id_task'] ?>&token=<?= $_SESSION['token'] ?>" title="décocher">✔️</a>
                 <?php } else { ?>
                     <button type="button" class="task__btn js-validate-btn">⭕</button>
-                    <!--
-                    <a class="task__lnk" href="action.php?action=done&id=<?= $task['id_task'] ?>&token=<?= $_SESSION['token'] ?>" title="cocher">⭕</a>
-                -->
                 <?php
                 }
 
@@ -88,7 +85,7 @@ generateToken();
         ?>
     </ul>
 
-    <form class="form-add" action="action.php" method="POST">
+    <form id="formAdd" class="form-add" action="" method="POST">
         <label class="form-add__lbl" for="text">Nouvelle tâche</label>
         <div class="form-add__wrap">
             <input class="form-add__fld" type="text" name="text" id="text">
@@ -97,6 +94,27 @@ generateToken();
             <input class="form-add__btn" type="submit" value="👉🏻">
         </div>
     </form>
+
+    <template id="taskTemplate">
+        <li class="task" data-id-task="">
+            <button type="button" class="task__btn js-validate-btn">⭕</button>
+            <h3 class="task__text" data-content="text"></h3>
+            <ul class="task__utils">
+                <li>
+                    <a class="task__lnk" href="#" title="modifier">🖊️</a>
+                </li>
+                <li>
+                    <a class="task__lnk" href="#" title="supprimer">❌</a>
+                </li>
+                <li>
+                    <a class="task__lnk" href="#" title="monter">👍🏼</a>
+                </li>
+                <li>
+                    <a class="task__lnk" href="#" title="descendre">👎🏼</a>
+                </li>
+            </ul>
+        </li>
+    </template>
 
     <script src="assets/js/script.js"></script>
 </body>

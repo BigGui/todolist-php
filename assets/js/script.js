@@ -21,44 +21,89 @@ function displayNotification(notification) {
     setTimeout(() => notif.remove(), 2000);
 }
 
-const validateBtnArray = document.querySelectorAll('.js-validate-btn');
-validateBtnArray.forEach(btn => {
-    btn.addEventListener('click', function (event) {
-        // Check and validate data
-        const data = {
-            action: 'done',
-            id: parseInt(this.closest('[data-id-task]').dataset.idTask),
-            token: getToken()
-        };
+async function fetchApi(method, data) {
+    try {
+        const response = await fetch('api.php', {
+            method: method,
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
 
-        if (isNaN(data.id) || data.token.length < 1) {
-            displayError('Oups... un problème est survenu');
-            return;
-        }
+        return response.json();
+    }
+    catch (error) {
+        console.error('Unable to load api');
+    }
+}
 
-        // Send HTTP request to the server with collected datas
-        // fetch('api.php?action=done&id=' + id + '&token=' + getToken())
-        fetch('api.php', {
-                method: 'PUT',
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(responseJson => {
+document.getElementById('tasksList').addEventListener('click', function (event) {
+    if (!event.target.classList.contains('js-validate-btn')) return;
 
-                // An error occurs, dispay error message
-                if (!responseJson.result) {
-                    displayError(responseJson.error);
-                    return;
-                }
+    // Check and validate data
+    const data = {
+        action: 'done',
+        id: parseInt(event.target.closest('[data-id-task]').dataset.idTask),
+        token: getToken()
+    };
 
-                // Update user interface
-                document.querySelector(`[data-id-task="${data.id}"]`).remove();
-                
-                // Notify user
-                displayNotification(responseJson.notification);
-            });
-    })
+    if (isNaN(data.id) || data.token.length < 1) {
+        displayError('Oups... un problème est survenu');
+        return;
+    }
+
+    // Send HTTP request to the server with collected datas
+    fetchApi('PUT', data)
+        .then(responseJson => {
+            // An error occurs, dispay error message
+            if (!responseJson.result) {
+                displayError(responseJson.error);
+                return;
+            }
+
+            // Update user interface
+            document.querySelector(`[data-id-task="${data.id}"]`).remove();
+
+            // Notify user
+            displayNotification(responseJson.notification);
+        });
+
+});
+
+document.getElementById('formAdd').addEventListener('submit', function (event) {
+    event.preventDefault();
+    // Check and validate data
+    const data = {
+        action: 'add',
+        token: getToken(),
+        text: this.querySelector('input[name="text"]').value
+    };
+
+    if (data.text.length < 1) {
+        displayError('Merci de saisir le texte de la tâche.');
+        return;
+    }
+    if (data.token.length < 1) {
+        displayError('Sécu !? HELP !!!!');
+        return;
+    }
+
+    fetchApi('POST', data)
+        .then(responseApi => {
+            // An error occurs, dispay error message
+            if (!responseApi.result) {
+                displayError(responseApi.error);
+                return;
+            }
+
+            // Update user interface
+            const taskElement = document.importNode(document.getElementById('taskTemplate').content, true);
+
+            taskElement.querySelector('[data-content="text"]').innerText = responseApi.text;
+            taskElement.querySelector('[data-id-task]').dataset.idTask = responseApi.idTask;
+            document.getElementById('tasksList').appendChild(taskElement);
+
+            document.querySelector('#formAdd input[name="text"]').value = '';
+        });
 });

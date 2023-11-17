@@ -27,7 +27,7 @@ checkCSRFAsync($data);
 // Prevent XSS fault
 checkXSS($data);
 
-if ($data['action'] === 'done' && isset($data['id'])) {
+if ($data['action'] === 'done' && isset($data['id']) && $_SERVER['REQUEST_METHOD'] === 'PUT') {
 
     $id = intval($data['id']);
 
@@ -70,6 +70,28 @@ if ($data['action'] === 'done' && isset($data['id'])) {
     echo json_encode([
         'result' => true,
         'notification' => 'La tâche a bien été effectuée.'
+    ]);
+    exit;
+}
+
+// ADD TASK
+else if ($data['action'] === 'add' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (strlen($data['text']) <= 0) throwAsyncError('Merci de saisir un texte pour la tâche.');
+
+    $query = $dbCo->prepare("INSERT INTO task (text, priority) VALUES (:text, :priority);");
+    $isQueryOk = $query->execute([
+        'text' => $data['text'],
+        'priority' => getNewPriority()
+    ]);
+
+    if (!$isQueryOk || $query->rowCount() !== 1) throwAsyncError('Erreur lors de la création de la tâche');
+
+    echo json_encode([
+        'result' => true,
+        'notification' => 'La tâche a bien été créée.',
+        'idTask' => $dbCo->lastInsertId(),
+        'text' => $data['text']
     ]);
     exit;
 }

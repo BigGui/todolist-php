@@ -152,6 +152,18 @@ function addNotification(string $text): void
     $_SESSION['notif'] = $text;
 }
 
+
+function throwAsyncError(string $message): void
+{
+    echo json_encode([
+        'result' => false,
+        'error' => $message
+    ]);
+    exit;
+}
+
+
+
 // ---------------------
 // LAYOUT
 // ---------------------

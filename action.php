@@ -16,50 +16,8 @@ checkCSRF('index.php');
 // Prevent XSS fault
 checkXSS($_REQUEST);
 
-// ADD TASK
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_REQUEST['action'] === 'add') {
-
-    if (strlen($_REQUEST['text']) <= 0) addErrorAndExit('Il faut saisir un texte pour la nouvelle tâche');
-
-    $query = $dbCo->prepare("INSERT INTO task (text, priority) VALUES (:text, :priority);");
-    $isQueryOk = $query->execute([
-        'text' => $_REQUEST['text'],
-        'priority' => getNewPriority()
-    ]);
-
-    if (!$isQueryOk || $query->rowCount() !== 1) addErrorAndExit('Erreur lors de la création de la tâche');
-
-    addNotification('Tâche créée');
-}
-// TASK DONE
-else if ($_REQUEST['action'] === 'done' && isset($_REQUEST['id'])) {
-
-    $id = intval($_REQUEST['id']);
-
-    if (empty($id)) addErrorAndExit('Identifiant de tâche invalide.');
-
-    $dbCo->beginTransaction();
-
-    // Get priority value from the selected task.
-    $priority = getPriority($id);
-
-    // Change done value to validate the task
-    $query = $dbCo->prepare("UPDATE task SET done = 1 WHERE id_task = :id;");
-    $query->execute(['id' => $id]);
-
-    if ($query->rowCount() !== 1) {
-        $dbCo->rollback();
-        addErrorAndExit('Erreur lors de la modif de la tache');
-    }
-
-    moveUpPriorityAbove($priority);
-
-    if (!$dbCo->commit()) addErrorAndExit('Impossible d\'effectuer cette tâche.');
-
-    addNotification('Tâche effectuée');
-}
 // UPDATE TASK
-else if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_REQUEST['action'] === 'update' && isset($_REQUEST['id']) && isset($_REQUEST['text'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_REQUEST['action'] === 'update' && isset($_REQUEST['id']) && isset($_REQUEST['text'])) {
 
     $id = intval($_REQUEST['id']);
 
