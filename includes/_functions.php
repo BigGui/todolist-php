@@ -151,3 +151,27 @@ function addNotification(string $text): void
 {
     $_SESSION['notif'] = $text;
 }
+
+// ---------------------
+// LAYOUT
+// ---------------------
+
+
+function getNotifHtml(): string
+{
+    $html = '<ul id="notification-wrapper" class="notif-wrapper">';
+
+    if (isset($_SESSION['notif'])) {
+        $html .= '<div class="notification">😀 ' . $_SESSION['notif'] . '</div>';
+        unset($_SESSION['notif']);
+    }
+
+    if (isset($_SESSION['error'])) {
+        $html .= '<div class="error">😨 ' . $_SESSION['error'] . '</div>';
+        unset($_SESSION['error']);
+    }
+
+    $html .= '</ul>';
+
+    return $html;
+}

@@ -22,21 +22,7 @@ generateToken();
     <header class="main-header">
         <h1 class="main-ttl">AU BOULOT !</h1>
     </header>
-    <ul id="notification-wrapper" class="notif-wrapper">
-        <?php
-
-        if (isset($_SESSION['notif'])) {
-            echo '<div class="notification">😀 ' . $_SESSION['notif'] . '</div>';
-            unset($_SESSION['notif']);
-        }
-
-        if (isset($_SESSION['error'])) {
-            echo '<div class="error">😨 ' . $_SESSION['error'] . '</div>';
-            unset($_SESSION['error']);
-        }
-
-        ?>
-    </ul>
+    <?= getNotifHtml() ?>
     <ul class="task-list">
 
         <?php

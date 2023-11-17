@@ -95,7 +95,7 @@ else if ($_REQUEST['action'] === 'delete') {
             $queryUpdate->execute(['id' => $id]);
 
             if ($queryUpdate->rowCount() !== 1) {
-                throw new Exception('Nombre incohérent de lignes affectées par la suppression.')
+                throw new Exception('Nombre incohérent de lignes affectées par la suppression.');
             }
             
             // Update priorities
