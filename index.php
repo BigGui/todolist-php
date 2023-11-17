@@ -19,6 +19,9 @@ generateToken();
 </head>
 
 <body>
+    <header class="main-header">
+        <h1 class="main-ttl">AU BOULOT !</h1>
+    </header>
     <ul id="notification-wrapper" class="notif-wrapper">
         <?php
 
