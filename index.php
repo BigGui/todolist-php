@@ -19,19 +19,21 @@ generateToken();
 </head>
 
 <body>
-    <?php
+    <ul id="notification-wrapper" class="notif-wrapper">
+        <?php
 
-    if (isset($_SESSION['notif'])) {
-        echo '<div class="notification">😀 ' . $_SESSION['notif'] . '</div>';
-        unset($_SESSION['notif']);
-    }
+        if (isset($_SESSION['notif'])) {
+            echo '<div class="notification">😀 ' . $_SESSION['notif'] . '</div>';
+            unset($_SESSION['notif']);
+        }
 
-    if (isset($_SESSION['error'])) {
-        echo '<div class="error">😨 ' . $_SESSION['error'] . '</div>';
-        unset($_SESSION['error']);
-    }
+        if (isset($_SESSION['error'])) {
+            echo '<div class="error">😨 ' . $_SESSION['error'] . '</div>';
+            unset($_SESSION['error']);
+        }
 
-    ?>
+        ?>
+    </ul>
     <ul class="task-list">
 
         <?php
@@ -42,16 +44,19 @@ generateToken();
         foreach ($query->fetchAll() as $task) {
             $isEdit = isset($_GET['action']) && $_GET['action'] === 'edit' && intval($_GET['id']) === intval($task['id_task']);
         ?>
-            <li class="task">
+            <li class="task" data-id-task="<?= $task['id_task'] ?>">
 
                 <?php
                 if ($task['done'] == 1) { ?>
                     <a class="task__lnk" href="action.php?action=undone&id=<?= $task['id_task'] ?>&token=<?= $_SESSION['token'] ?>" title="décocher">✔️</a>
                 <?php } else { ?>
+                    <button type="button" class="task__btn js-validate-btn">⭕</button>
+                    <!--
                     <a class="task__lnk" href="action.php?action=done&id=<?= $task['id_task'] ?>&token=<?= $_SESSION['token'] ?>" title="cocher">⭕</a>
+                -->
                 <?php
                 }
-                
+
                 if ($isEdit) {
                 ?>
                     <form class="inline-form" action="action.php" method="post">
@@ -99,10 +104,12 @@ generateToken();
         <div class="form-add__wrap">
             <input class="form-add__fld" type="text" name="text" id="text">
             <input type="hidden" name="action" value="add">
-            <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
+            <input id="tokenField" type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
             <input class="form-add__btn" type="submit" value="👉🏻">
         </div>
     </form>
+
+    <script src="assets/js/script.js"></script>
 </body>
 
 </html>

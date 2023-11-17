@@ -81,7 +81,8 @@ a, a:active, a:focus, a:hover {
     gap: .5rem;
 }
 
-.task__lnk {
+.task__lnk,
+.task__btn {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -92,8 +93,13 @@ a, a:active, a:focus, a:hover {
     background-color: var(--bg-color);
     transition: background-color ease-in-out 200ms;
 }
-.task__lnk:hover {
+.task__lnk:hover,
+.task__btn:hover {
     background-color: var(--bg-sandbox);
+}
+.task__btn {
+    border: none;
+    cursor: pointer;
 }
 
 
@@ -128,6 +134,13 @@ a, a:active, a:focus, a:hover {
     background: none;
     font-size: 2rem;
     padding: 0;
+}
+
+.notif-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 1rem;
 }
 
 .notification, .error {

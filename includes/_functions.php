@@ -28,7 +28,7 @@ function generateToken()
  */
 function checkCSRF(string $url): void
 {
-    if (!isset($_SERVER['HTTP_REFERER']) || !str_contains($_SERVER['HTTP_REFERER'], 'http://localhost/todolist-php')) {
+    if (!isset($_SERVER['HTTP_REFERER']) || !str_contains($_SERVER['HTTP_REFERER'], 'http://localhost/todolist/')) {
         $_SESSION['error'] = 'error_referer';
     } else if (
         !isset($_SESSION['token']) || !isset($_REQUEST['token'])
@@ -40,6 +40,32 @@ function checkCSRF(string $url): void
     if (!isset($_SESSION['error'])) return;
 
     header('Location: ' . $url);
+    exit;
+}
+
+/**
+ * Check for CSRF with referer and token
+ *
+ * @param array $data
+ * @return void
+ */
+function checkCSRFAsync(array $data): void
+{
+    if (!isset($_SERVER['HTTP_REFERER']) || !str_contains($_SERVER['HTTP_REFERER'], 'http://localhost/todolist/')) {
+        $error = 'error_referer';
+    } else if (
+        !isset($_SESSION['token']) || !isset($data['token'])
+        || $data['token'] !== $_SESSION['token']
+        || $_SESSION['tokenExpire'] < time()
+    ) {
+        $error = 'error_token';
+    }
+    if (!isset($error)) return;
+
+    echo json_encode([
+        'result' => false,
+        'error' => $error
+    ]);
     exit;
 }
 
